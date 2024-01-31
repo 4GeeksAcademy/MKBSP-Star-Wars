@@ -1,3 +1,5 @@
+import { json } from "react-router";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -12,7 +14,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			characters: [],
+			planets: [],
+			vehicles: [],
+			favorites: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -37,7 +43,51 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
-			}
+			},
+			saveFavoriteToLocalStorage: (title) => {
+				let favorites = JSON.parse(localStorage.getItem('favoriteButton')) || [];
+				const index = favorites.indexOf(title);
+				if (index > -1) {
+				  // Item exists, remove it
+				  favorites.splice(index, 1);
+				} else {
+				  // Item doesn't exist, add it
+				  favorites.push(title);
+				}
+				localStorage.setItem('favoriteButton', JSON.stringify(favorites));
+				setStore({ favorites }); //it works...? :/
+			},
+			loadFavorites: () => {
+				const storedFavorites = JSON.parse(localStorage.getItem('favoriteButton')) || [];
+				const store = getStore();
+				if (JSON.stringify(store.favorites) !== JSON.stringify(storedFavorites)) {
+				  setStore({ favorites: storedFavorites });
+				}
+			},
+			removeFavorite: (title) => {
+				const store = getStore();
+				const updatedFavorites = store.favorites.filter(fav => fav !== title);
+				setStore({ favorites: updatedFavorites });
+				localStorage.setItem('favoriteButton', JSON.stringify(updatedFavorites));
+			},
+			loadCharacters: () => {
+                fetch("https://www.swapi.tech/api/people/")
+                    .then(res => res.json())
+                    .then(data => setStore({ characters: data.results }))
+                    .catch(err => console.error(err));
+            },
+            loadPlanets: () => {
+                fetch("https://www.swapi.tech/api/planets/")
+                    .then(res => res.json())
+                    .then(data => setStore({ planets: data.results }))
+                    .catch(err => console.error(err));
+            },
+            loadVehicles: () => {
+                fetch("https://www.swapi.tech/api/vehicles/")
+                    .then(res => res.json())
+                    .then(data => setStore({ vehicles: data.results }))
+                    .catch(err => console.error(err));
+            }
 		}
 	};
 };
