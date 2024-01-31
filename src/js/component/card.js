@@ -21,6 +21,7 @@ export const Card = ({ data }) => {
                 <h5 className="card-title">{data.name}</h5>
                 <p className="card-text">{data.description}</p>
                 {/* placeholder...*/}
+                <a className="btn btn-primary" href="#" role="button">Learn More</a>
                 <a href="#" className={`btn ${isFavorited ? 'btn-primary active' : 'btn-secondary'}`}
                    role="button"
                    data-bs-toggle="button"

@@ -73,7 +73,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			loadCharacters: () => {
                 fetch("https://www.swapi.tech/api/people/")
                     .then(res => res.json())
-                    .then(data => setStore({ characters: data.results }))
+                    .then(data => { console.log(data.results)
+						setStore({ characters: data.results })
+					})
                     .catch(err => console.error(err));
             },
             loadPlanets: () => {
