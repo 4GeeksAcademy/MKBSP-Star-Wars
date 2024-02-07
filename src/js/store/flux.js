@@ -89,7 +89,15 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .then(res => res.json())
                     .then(data => setStore({ vehicles: data.results }))
                     .catch(err => console.error(err));
-            }
+            },
+			loadsperson: () => {
+                fetch("https://www.swapi.tech/api/people/$uid")
+                    .then(res => res.json())
+                    .then(data => { console.log(data.results)
+						setStore({ characters: data.results })
+					})
+                    .catch(err => console.error(err));
+            },
 		}
 	};
 };
