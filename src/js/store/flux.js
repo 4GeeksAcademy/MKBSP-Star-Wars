@@ -24,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const res = await fetch("https://www.swapi.tech/api/people/");
                     const data = await res.json();
                     const characters = await Promise.all(data.results.map(async character => {
-                        const imageUrl = `https://starwars-visualguide.com/assets/img/characters/${character.uid}.jpg`;
+                        let imageUrl = `https://starwars-visualguide.com/assets/img/characters/${character.uid}.jpg`;
                         try {
                             await fetch(imageUrl); // Check if the image exists
                         } catch {
@@ -42,7 +42,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const res = await fetch("https://www.swapi.tech/api/planets/");
                     const data = await res.json();
                     const planets = await Promise.all(data.results.map(async planet => {
-                        const imageUrl = `https://starwars-visualguide.com/assets/img/planets/${planet.uid}.jpg`;
+                        let imageUrl = `https://starwars-visualguide.com/assets/img/planets/${planet.uid}.jpg`;
                         try {
                             await fetch(imageUrl); // Check if the image exists
                         } catch {
@@ -60,7 +60,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const res = await fetch("https://www.swapi.tech/api/vehicles/");
                     const data = await res.json();
                     const vehicles = await Promise.all(data.results.map(async vehicle => {
-                        const imageUrl = `https://starwars-visualguide.com/assets/img/vehicles/${vehicle.uid}.jpg`;
+                        let imageUrl = `https://starwars-visualguide.com/assets/img/vehicles/${vehicle.uid}.jpg`;
                         try {
                             await fetch(imageUrl); // Check if the image exists
                         } catch {
@@ -69,6 +69,21 @@ const getState = ({ getStore, getActions, setStore }) => {
                         return { ...vehicle, imageUrl };
                     }));
                     setStore({ vehicles });
+                } catch (err) {
+                    console.error(err);
+                }
+            },
+            loadItem: async (type, uid) => {
+                try {
+                    const res = await fetch(`https://www.swapi.tech/api/${type}/${uid}`);
+                    const data = await res.json();
+                    let imageUrl = `https://starwars-visualguide.com/assets/img/${type}/${uid}.jpg`;
+                    try {
+                        await fetch(imageUrl); // Check if the image exists
+                    } catch {
+                        imageUrl = jarjar; // Use fallback image if it doesn't
+                    }
+                    return { ...data.result.properties, imageUrl };
                 } catch (err) {
                     console.error(err);
                 }
