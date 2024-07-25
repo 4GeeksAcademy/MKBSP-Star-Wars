@@ -1,105 +1,101 @@
-import { json } from "react-router";
-
 const getState = ({ getStore, getActions, setStore }) => {
-	return {
-		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
-			characters: [],
-			planets: [],
-			vehicles: [],
-			favorites: []
-		},
-		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
-			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
-			},
-			saveFavoriteToLocalStorage: (title) => {
-				let favorites = JSON.parse(localStorage.getItem('favoriteButton')) || [];
-				const index = favorites.indexOf(title);
-				if (index > -1) {
-				  // Item exists, remove it
-				  favorites.splice(index, 1);
-				} else {
-				  // Item doesn't exist, add it
-				  favorites.push(title);
-				}
-				localStorage.setItem('favoriteButton', JSON.stringify(favorites));
-				setStore({ favorites }); //it works...? :/
-			},
-			loadFavorites: () => {
-				const storedFavorites = JSON.parse(localStorage.getItem('favoriteButton')) || [];
-				const store = getStore();
-				if (JSON.stringify(store.favorites) !== JSON.stringify(storedFavorites)) {
-				  setStore({ favorites: storedFavorites });
-				}
-			},
-			removeFavorite: (title) => {
-				const store = getStore();
-				const updatedFavorites = store.favorites.filter(fav => fav !== title);
-				setStore({ favorites: updatedFavorites });
-				localStorage.setItem('favoriteButton', JSON.stringify(updatedFavorites));
-			},
-			loadCharacters: () => {
-                fetch("https://www.swapi.tech/api/people/")
-                    .then(res => res.json())
-                    .then(data => { console.log(data.results)
-						setStore({ characters: data.results })
-					})
-                    .catch(err => console.error(err));
+    return {
+        store: {
+            demo: [
+                {
+                    title: "FIRST",
+                    background: "white",
+                    initial: "white"
+                },
+                {
+                    title: "SECOND",
+                    background: "white",
+                    initial: "white"
+                }
+            ],
+            characters: [],
+            planets: [],
+            vehicles: [],
+            favorites: []
+        },
+        actions: {
+            loadCharacters: async () => {
+                try {
+                    const res = await fetch("https://www.swapi.tech/api/people/");
+                    const data = await res.json();
+                    const characters = await Promise.all(data.results.map(async character => {
+                        const imageUrl = `https://starwars-visualguide.com/assets/img/characters/${character.uid}.jpg`;
+                        try {
+                            await fetch(imageUrl); // Check if the image exists
+                        } catch {
+                            imageUrl = jarjar; // Use fallback image if it doesn't
+                        }
+                        return { ...character, imageUrl };
+                    }));
+                    setStore({ characters });
+                } catch (err) {
+                    console.error(err);
+                }
             },
-            loadPlanets: () => {
-                fetch("https://www.swapi.tech/api/planets/")
-                    .then(res => res.json())
-                    .then(data => setStore({ planets: data.results }))
-                    .catch(err => console.error(err));
+            loadPlanets: async () => {
+                try {
+                    const res = await fetch("https://www.swapi.tech/api/planets/");
+                    const data = await res.json();
+                    const planets = await Promise.all(data.results.map(async planet => {
+                        const imageUrl = `https://starwars-visualguide.com/assets/img/planets/${planet.uid}.jpg`;
+                        try {
+                            await fetch(imageUrl); // Check if the image exists
+                        } catch {
+                            imageUrl = jarjar; // Use fallback image if it doesn't
+                        }
+                        return { ...planet, imageUrl };
+                    }));
+                    setStore({ planets });
+                } catch (err) {
+                    console.error(err);
+                }
             },
-            loadVehicles: () => {
-                fetch("https://www.swapi.tech/api/vehicles/")
-                    .then(res => res.json())
-                    .then(data => setStore({ vehicles: data.results }))
-                    .catch(err => console.error(err));
+            loadVehicles: async () => {
+                try {
+                    const res = await fetch("https://www.swapi.tech/api/vehicles/");
+                    const data = await res.json();
+                    const vehicles = await Promise.all(data.results.map(async vehicle => {
+                        const imageUrl = `https://starwars-visualguide.com/assets/img/vehicles/${vehicle.uid}.jpg`;
+                        try {
+                            await fetch(imageUrl); // Check if the image exists
+                        } catch {
+                            imageUrl = jarjar; // Use fallback image if it doesn't
+                        }
+                        return { ...vehicle, imageUrl };
+                    }));
+                    setStore({ vehicles });
+                } catch (err) {
+                    console.error(err);
+                }
             },
-			loadsperson: () => {
-                fetch("https://www.swapi.tech/api/people/$uid")
-                    .then(res => res.json())
-                    .then(data => { console.log(data.results)
-						setStore({ characters: data.results })
-					})
-                    .catch(err => console.error(err));
+            saveFavoriteToLocalStorage: (title) => {
+                let favorites = JSON.parse(localStorage.getItem('favoriteButton')) || [];
+                const index = favorites.indexOf(title);
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                } else {
+                    favorites.push(title);
+                }
+                localStorage.setItem('favoriteButton', JSON.stringify(favorites));
+                setStore({ favorites });
             },
-		}
-	};
+            loadFavorites: () => {
+                const storedFavorites = JSON.parse(localStorage.getItem('favoriteButton')) || [];
+                setStore({ favorites: storedFavorites });
+            },
+            removeFavorite: (title) => {
+                const store = getStore();
+                const updatedFavorites = store.favorites.filter(fav => fav !== title);
+                setStore({ favorites: updatedFavorites });
+                localStorage.setItem('favoriteButton', JSON.stringify(updatedFavorites));
+            }
+        }
+    };
 };
 
 export default getState;

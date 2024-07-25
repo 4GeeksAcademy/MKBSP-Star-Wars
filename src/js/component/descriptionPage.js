@@ -1,91 +1,236 @@
-import React, { useContext } from 'react';
-import PropTypes, { array, string } from 'prop-types';
+import React, { useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Context } from '../store/appContext';
-import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import jarjar from '../../img/wtf-star-wars-jar-jar-binks-why-8595592192.png';
-import Button from 'react-bootstrap/Button';
-import { Link } from 'react-router-dom';
 
-
-
-
-export const FullPage = () => {
+const FullPage = () => {
     const { store, actions } = useContext(Context);
-    const { name } = useParams();
-    const [itemData, setItemData] = useState(null);
+    const { type, uid } = useParams();
+    const [itemData, setItemData] = useState({
+        name: "Dummy Character",
+        height: "180",
+        mass: "80",
+        hair_color: "brown",
+        skin_color: "fair",
+        eye_color: "blue",
+        birth_year: "19BBY",
+        gender: "male",
+        homeworld: "Tatooine",
+        films: ["A New Hope", "The Empire Strikes Back", "Return of the Jedi"],
+        species: "Human",
+        vehicles: ["Snowspeeder", "Imperial Speeder Bike"],
+        starships: ["X-wing", "Imperial shuttle"],
+        created: "2024-07-23T12:00:00Z",
+        edited: "2024-07-23T12:00:00Z",
+        url: "https://swapi.tech/api/people/1",
+        imageUrl: jarjar
+    });
 
     useEffect(() => {
         const fetchData = async () => {
-            // Fetching logic here
+            try {
+                const res = await fetch(`https://www.swapi.tech/api/${type}/${uid}`);
+                const data = await res.json();
+                setItemData(data.result.properties);
+            } catch (error) {
+                console.error(error);
+            }
         };
-    
         fetchData();
-    }, [name, actions]);
+    }, [type, uid]);
 
-    if (!itemData) {
-        return <div>Loading...</div>;
-    }
     return (
         <div className='container'>
             <div className="container my-5">
                 <div className="p-5 text-center bg-body-tertiary rounded-3">
-                    <svg className="bi mt-4 mb-3" style={{ color: 'var(--bs-indigo)' }} width="100" height="100"><use href="#bootstrap"></use></svg>
-                    <h1 className="text-body-emphasis">{data.name}</h1>
-                    <p className="col-lg-8 mx-auto fs-5 text-muted">
-                        This is a custom jumbotron featuring an SVG image at the top, some longer text that wraps early thanks to a responsive <code>.col-*</code> className, and a customized call to action.
-                    </p>
-                    <div className="d-inline-flex gap-2 mb-5">
-                        <button className="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" type="button">
-                            Call to action
-                            <svg className="bi ms-2" width="24" height="24"><use href="#arrow-right-short"></use></svg>
-                        </button>
-                    </div>
+                    <img src={itemData.imageUrl || jarjar} className="card-img-top" alt={itemData.name} onError={(e) => { e.target.src = jarjar }} />
+                    <h1 className="text-body-emphasis">{itemData.name}</h1>
+                    <table className="table table-striped">
+                        <tbody>
+                            {type === 'characters' && (
+                                <>
+                                    <tr>
+                                        <td>Height</td>
+                                        <td>{itemData.height}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mass</td>
+                                        <td>{itemData.mass}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Hair Color</td>
+                                        <td>{itemData.hair_color}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Skin Color</td>
+                                        <td>{itemData.skin_color}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Eye Color</td>
+                                        <td>{itemData.eye_color}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Birth Year</td>
+                                        <td>{itemData.birth_year}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Gender</td>
+                                        <td>{itemData.gender}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Homeworld</td>
+                                        <td>{itemData.homeworld}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Films</td>
+                                        <td>{itemData.films.join(', ')}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Species</td>
+                                        <td>{itemData.species}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Vehicles</td>
+                                        <td>{itemData.vehicles.join(', ')}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Starships</td>
+                                        <td>{itemData.starships.join(', ')}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Created</td>
+                                        <td>{itemData.created}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Edited</td>
+                                        <td>{itemData.edited}</td>
+                                    </tr>
+                                </>
+                            )}
+                            {type === 'planets' && (
+                                <>
+                                    <tr>
+                                        <td>Climate</td>
+                                        <td>{itemData.climate}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Diameter</td>
+                                        <td>{itemData.diameter}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Gravity</td>
+                                        <td>{itemData.gravity}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Population</td>
+                                        <td>{itemData.population}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Terrain</td>
+                                        <td>{itemData.terrain}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Surface Water</td>
+                                        <td>{itemData.surface_water}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Orbital Period</td>
+                                        <td>{itemData.orbital_period}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rotation Period</td>
+                                        <td>{itemData.rotation_period}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Residents</td>
+                                        <td>{itemData.residents.join(', ')}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Films</td>
+                                        <td>{itemData.films.join(', ')}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Created</td>
+                                        <td>{itemData.created}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Edited</td>
+                                        <td>{itemData.edited}</td>
+                                    </tr>
+                                </>
+                            )}
+                            {type === 'vehicles' && (
+                                <>
+                                    <tr>
+                                        <td>Model</td>
+                                        <td>{itemData.model}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Manufacturer</td>
+                                        <td>{itemData.manufacturer}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cost in Credits</td>
+                                        <td>{itemData.cost_in_credits}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Length</td>
+                                        <td>{itemData.length}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Max Atmosphering Speed</td>
+                                        <td>{itemData.max_atmosphering_speed}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Crew</td>
+                                        <td>{itemData.crew}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Passengers</td>
+                                        <td>{itemData.passengers}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cargo Capacity</td>
+                                        <td>{itemData.cargo_capacity}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Consumables</td>
+                                        <td>{itemData.consumables}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Vehicle Class</td>
+                                        <td>{itemData.vehicle_class}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pilots</td>
+                                        <td>{itemData.pilots.join(', ')}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Films</td>
+                                        <td>{itemData.films.join(', ')}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Created</td>
+                                        <td>{itemData.created}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Edited</td>
+                                        <td>{itemData.edited}</td>
+                                    </tr>
+                                </>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
         </div>
-    )
-}
-
-
+    );
+};
 
 FullPage.propTypes = {
-    data: PropTypes.shape({
-        name: PropTypes.string,
-        model: PropTypes.string,
-        birth_year: PropTypes.string,
-        eye_color: PropTypes.string,
-        gender: PropTypes.string,
-        hair_color: PropTypes.string,
-        height: PropTypes.string,
-        mass: PropTypes.string,
-        skin_color: PropTypes.string,
-        homeworld: PropTypes.string,
-        films: PropTypes.array,
-        species: PropTypes.array,
-        starships: PropTypes.array,
-        vehicles: PropTypes.array,
-        url: PropTypes.string,
-        created: PropTypes.string,
-        edited: PropTypes.string,
-        starship_class: PropTypes.string,
-        manufacturer: PropTypes.string,
-        cost_in_credits: PropTypes.string,
-        length: PropTypes.string,
-        crew: PropTypes.string,
-        passengers: PropTypes.string,
-        max_atmosphering_speed: PropTypes.string,
-        hyperdrive_rating: PropTypes.string,
-        cargo_capacity: PropTypes.string,
-        consumables: PropTypes.string,
-        pilots: PropTypes.string,
-        diameter: PropTypes.string,
-        rotation_period: PropTypes.string,
-        orbital_period: PropTypes.string,
-        gravity: PropTypes.string,
-        population: PropTypes.string,
-        terrain: PropTypes.string,
-        climate: PropTypes.string,
-        residents: PropTypes.string,
-    }
-)};
+    type: PropTypes.string,
+    uid: PropTypes.string,
+};
+
+export default FullPage;
