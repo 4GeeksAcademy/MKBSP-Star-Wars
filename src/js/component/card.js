@@ -24,10 +24,10 @@ export const Card = ({ data, type }) => {
             <img src={imageSrc} className="card-img-top" alt={data.name} onError={handleImageError} />
             <div className="card-body">
                 <h5 className="card-title">{data.name}</h5>
-                {type === 'characters' && <p className="card-text">{data.gender}</p>}
+                {type === 'people' && <p className="card-text">{data.gender}</p>}
                 {type === 'planets' && <p className="card-text">{data.terrain}</p>}
                 {type === 'vehicles' && <p className="card-text">{data.model}</p>}
-                <Button variant="primary" className="mr-2" as={Link} to={`/descriptionPage/${type}/${data.uid}`}>Learn More</Button>
+                <Button variant="primary" className="mr-2" as={Link} to={`/fullPage/${type}/${data.uid}`}>Learn More</Button>
                 <a href="#" className={`btn ${isFavorited ? 'btn-primary active' : 'btn-secondary'}`}
                    role="button"
                    data-bs-toggle="button"

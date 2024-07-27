@@ -9,7 +9,9 @@ import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
-import { FullPage } from "./component/fullPage";
+import FullPage from "./component/fullPage";  
+
+
 
 //create your first component
 const Layout = () => {

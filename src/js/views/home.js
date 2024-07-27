@@ -7,19 +7,19 @@ export const Home = () => {
     const { store, actions } = useContext(Context);
 
     useEffect(() => {
-        actions.loadCharacters();
+        actions.loadPeople();
         actions.loadPlanets();
         actions.loadVehicles();
     }, []);
 
     return (
         <div className="text-center">
-            {/* Characters */}
+            {/* Characters NOW PEOPLE! */}
             <div>
-                <h1>Characters</h1>
+                <h1>People</h1>
                 <div className="d-flex flex-row flex-nowrap overflow-auto">
-                    {store.characters.map(character => (
-                        <Card key={character.uid} data={character} type="characters" />
+                    {store.people.map(people => (
+                        <Card key={people.uid} data={people} type="people" />
                     ))}
                 </div>
             </div>

@@ -13,30 +13,31 @@ const getState = ({ getStore, getActions, setStore }) => {
                     initial: "white"
                 }
             ],
-            characters: [],
+            people: [],
             planets: [],
             vehicles: [],
             favorites: []
         },
         actions: {
-            loadCharacters: async () => {
+            loadPeople: async () => {
                 try {
                     const res = await fetch("https://www.swapi.tech/api/people/");
                     const data = await res.json();
-                    const characters = await Promise.all(data.results.map(async character => {
-                        let imageUrl = `https://starwars-visualguide.com/assets/img/characters/${character.uid}.jpg`;
+                    const people = await Promise.all(data.results.map(async people => {
+                        let imageUrl = `https://starwars-visualguide.com/assets/img/characters/${people.uid}.jpg`;
                         try {
                             await fetch(imageUrl); // Check if the image exists
                         } catch {
                             imageUrl = jarjar; // Use fallback image if it doesn't
                         }
-                        return { ...character, imageUrl };
+                        return { ...people, imageUrl };
                     }));
-                    setStore({ characters });
+                    setStore({ people });
                 } catch (err) {
                     console.error(err);
                 }
             },
+
             loadPlanets: async () => {
                 try {
                     const res = await fetch("https://www.swapi.tech/api/planets/");
@@ -55,6 +56,19 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error(err);
                 }
             },
+
+            loadSinglePlanet: async (planetUrl) => {
+                let planet
+                try {
+                    const res = await fetch(planetUrl);
+                    planet = await res.json();
+                } catch (err) {
+                    console.error(err);
+                }
+                return planet
+            },
+
+
             loadVehicles: async () => {
                 try {
                     const res = await fetch("https://www.swapi.tech/api/vehicles/");
@@ -73,11 +87,15 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error(err);
                 }
             },
+
             loadItem: async (type, uid) => {
                 try {
                     const res = await fetch(`https://www.swapi.tech/api/${type}/${uid}`);
+                    console.log("testing data with res", res)
                     const data = await res.json();
-                    let imageUrl = `https://starwars-visualguide.com/assets/img/${type}/${uid}.jpg`;
+                    console.log("Testing data", data)
+                    const imageType = type === "people" ? "characters" : type
+                    let imageUrl = `https://starwars-visualguide.com/assets/img/${imageType}/${uid}.jpg`;
                     try {
                         await fetch(imageUrl); // Check if the image exists
                     } catch {
@@ -88,6 +106,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error(err);
                 }
             },
+
             saveFavoriteToLocalStorage: (title) => {
                 let favorites = JSON.parse(localStorage.getItem('favoriteButton')) || [];
                 const index = favorites.indexOf(title);

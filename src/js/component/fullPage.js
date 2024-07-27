@@ -11,8 +11,13 @@ const FullPage = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            console.log(type, uid)
             try {
                 const data = await actions.loadItem(type, uid);
+                console.log(data)
+                if (data.homeworld) {
+                    const planet = await actions.loadSinglePlanet(data.homeworld)
+                    data.homeworld = planet.result.properties.name}
                 setItemData(data);
             } catch (error) {
                 console.error(error);
@@ -24,8 +29,8 @@ const FullPage = () => {
     if (!itemData) {
         return <div>Loading...</div>;
     }
-
-    const renderCharacterData = () => (
+    console.log("itemdata", itemData)
+    const renderPeopleData = () => (
         <>
             <tr><td>Height</td><td>{itemData.height}</td></tr>
             <tr><td>Mass</td><td>{itemData.mass}</td></tr>
@@ -35,10 +40,10 @@ const FullPage = () => {
             <tr><td>Birth Year</td><td>{itemData.birth_year}</td></tr>
             <tr><td>Gender</td><td>{itemData.gender}</td></tr>
             <tr><td>Homeworld</td><td>{itemData.homeworld}</td></tr>
-            <tr><td>Films</td><td>{itemData.films.join(', ')}</td></tr>
+            <tr><td>Films</td><td>{itemData.films}</td></tr>
             <tr><td>Species</td><td>{itemData.species}</td></tr>
-            <tr><td>Vehicles</td><td>{itemData.vehicles.join(', ')}</td></tr>
-            <tr><td>Starships</td><td>{itemData.starships.join(', ')}</td></tr>
+            <tr><td>Vehicles</td><td>{itemData.vehicles}</td></tr>
+            <tr><td>Starships</td><td>{itemData.starships}</td></tr>
             <tr><td>Created</td><td>{itemData.created}</td></tr>
             <tr><td>Edited</td><td>{itemData.edited}</td></tr>
         </>
@@ -54,8 +59,8 @@ const FullPage = () => {
             <tr><td>Surface Water</td><td>{itemData.surface_water}</td></tr>
             <tr><td>Orbital Period</td><td>{itemData.orbital_period}</td></tr>
             <tr><td>Rotation Period</td><td>{itemData.rotation_period}</td></tr>
-            <tr><td>Residents</td><td>{itemData.residents.join(', ')}</td></tr>
-            <tr><td>Films</td><td>{itemData.films.join(', ')}</td></tr>
+            <tr><td>Residents</td><td>{itemData.residents}</td></tr>
+            <tr><td>Films</td><td>{itemData.films}</td></tr>
             <tr><td>Created</td><td>{itemData.created}</td></tr>
             <tr><td>Edited</td><td>{itemData.edited}</td></tr>
         </>
@@ -73,17 +78,18 @@ const FullPage = () => {
             <tr><td>Cargo Capacity</td><td>{itemData.cargo_capacity}</td></tr>
             <tr><td>Consumables</td><td>{itemData.consumables}</td></tr>
             <tr><td>Vehicle Class</td><td>{itemData.vehicle_class}</td></tr>
-            <tr><td>Pilots</td><td>{itemData.pilots.join(', ')}</td></tr>
-            <tr><td>Films</td><td>{itemData.films.join(', ')}</td></tr>
+            <tr><td>Pilots</td><td>{itemData.pilots}</td></tr>
+            <tr><td>Films</td><td>{itemData.films}</td></tr>
             <tr><td>Created</td><td>{itemData.created}</td></tr>
             <tr><td>Edited</td><td>{itemData.edited}</td></tr>
         </>
     );
 
     const renderTableData = () => {
+        console.log(type)
         switch (type) {
-            case 'characters':
-                return renderCharacterData();
+            case 'people':
+                return renderPeopleData();
             case 'planets':
                 return renderPlanetData();
             case 'vehicles':
